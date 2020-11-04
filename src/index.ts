@@ -1,4 +1,5 @@
 import { NotFoundError, logIt, LogType, natsWrapper } from '@nielsendigital/ms-common';
+import { OrderCreatedListener } from './events/listeners/order-created-listener';
 
 const startApp = async () => {
   logIt.out(LogType.STARTED, 'Expiration service started');
@@ -38,6 +39,8 @@ const startApp = async () => {
     // gracefully exit
     process.on('SIGINT', () => natsWrapper.client.close());
     process.on('SIGTERM', () => natsWrapper.client.close());
+
+    new OrderCreatedListener(natsWrapper.client).listen();
     // -----
   } catch (err) {
     logIt.out(LogType.ERROR, 'NATS failed to load.');
