@@ -1,12 +1,13 @@
-import { logIt, LogType, Topics } from '@nielsendigital/ms-common';
+import { logIt, LogType, Topics, natsWrapper } from '@nielsendigital/ms-common';
 import Queue from 'bull';
+import { ExpirationCompletePublisher } from '../events/publishers/expiration-complete-publisher';
 
 interface Payload {
   orderId: string;
 }
 
 // Using the NATS topics enum for the jobType param to keep conssitency
-const expirationQueue = new Queue<Payload>(Topics.OrderExpired, {
+const expirationQueue = new Queue<Payload>(Topics.ExpirationComplete, {
   redis: {
     // value for redis host is found in infra/k8s/expiration-depl.yaml
     host: process.env.REDIS_HOST,
@@ -14,7 +15,12 @@ const expirationQueue = new Queue<Payload>(Topics.OrderExpired, {
 });
 
 expirationQueue.process(async (job) => {
-  logIt.out(LogType.STARTED, `I want to publish an ${Topics.OrderExpired} for the orderId: ${job.data.orderId}`);
+  logIt.out(LogType.INFO, `I want to publish an ${Topics.ExpirationComplete} for the orderId: ${job.data.orderId}`);
+
+  // publish
+  new ExpirationCompletePublisher(natsWrapper.client).publish({
+    orderId: job.data.orderId,
+  });
 });
 
 export { expirationQueue };
