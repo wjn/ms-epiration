@@ -19,7 +19,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@nielsendigital/ms-common": "^1.1.9",
+    "@nielsendigital/ms-common": "^1.1.10",
     "@types/bull": "^3.14.4",
     "bull": "^3.18.1",
     "node-nats-streaming": "^0.3.2",

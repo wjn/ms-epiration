@@ -1,4 +1,4 @@
-import { Topics } from '@nielsendigital/ms-common';
+import { logIt, LogType, Topics } from '@nielsendigital/ms-common';
 import Queue from 'bull';
 
 interface Payload {
@@ -14,7 +14,7 @@ const expirationQueue = new Queue<Payload>(Topics.OrderExpired, {
 });
 
 expirationQueue.process(async (job) => {
-  console.log(`I want to publish an ${Topics.OrderExpired} for the orderId: ${job.data.orderId}`);
+  logIt.out(LogType.STARTED, `I want to publish an ${Topics.OrderExpired} for the orderId: ${job.data.orderId}`);
 });
 
 export { expirationQueue };
