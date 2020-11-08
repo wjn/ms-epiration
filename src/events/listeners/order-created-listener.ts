@@ -1,4 +1,12 @@
-import { Listener, OrderCreatedEvent, OrderData, queueGroupNames, Topics } from '@nielsendigital/ms-common';
+import {
+  Listener,
+  logIt,
+  LogType,
+  OrderCreatedEvent,
+  OrderData,
+  queueGroupNames,
+  Topics,
+} from '@nielsendigital/ms-common';
 import { Message } from 'node-nats-streaming';
 import { expirationQueue } from '../../queues/expiration-queue';
 
@@ -9,7 +17,7 @@ export class OrderCreatedListener extends Listener<OrderCreatedEvent> {
   async onMessage(data: OrderData, msg: Message) {
     const delay = new Date(data.expiresAt).getTime() - new Date().getTime();
 
-    console.log(`Delaying for ${delay} milliseconds.`);
+    logIt.out(LogType.NOTICE, `Expiration for orderId ${data.id} will occur in ${delay} miliseconds`);
 
     expirationQueue.add(
       {

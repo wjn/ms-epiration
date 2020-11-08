@@ -15,7 +15,7 @@ const expirationQueue = new Queue<Payload>(Topics.ExpirationComplete, {
 });
 
 expirationQueue.process(async (job) => {
-  logIt.out(LogType.INFO, `I want to publish an ${Topics.ExpirationComplete} for the orderId: ${job.data.orderId}`);
+  logIt.out(LogType.STARTED, `Expiration Queue processing job for orderId: ${job.data.orderId}`);
 
   // publish
   new ExpirationCompletePublisher(natsWrapper.client).publish({
